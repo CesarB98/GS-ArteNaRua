@@ -118,24 +118,6 @@ cd ms-obras
 ./mvnw spring-boot:run
 ```
 
-### Se o Java não for o 25
-
-Em **cada um dos 4 terminais**, antes do `mvnw`, aponte o `JAVA_HOME` para o JDK 25:
-
-```powershell
-# Windows PowerShell (ajuste o caminho para onde o JDK 25 esta instalado)
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot"
-```
-
-```bash
-# Linux / macOS / Git Bash
-export JAVA_HOME=/caminho/do/jdk-25
-```
-
-> **Pelo IntelliJ IDEA:** abra a pasta raiz, configure o *Project SDK* para o JDK 25 e execute as classes
-> `EurekaServerApplication`, `MsObrasApplication`, `MsContribuicoesApplication` e `ApiGatewayApplication`
-> (nessa ordem). Os serviços usam porta aleatória, então não conflitam.
-
 ## Passo 4 — Conferir que está tudo no ar
 
 Abra no navegador: **<http://localhost:8761>** (painel do Eureka).
@@ -226,42 +208,8 @@ curl -i http://localhost:8082/api/v1/obras/5
 > **Nota:** no navegador só funcionam os `GET` (barra de endereço). `POST` e `PATCH` precisam do **Swagger** (Passo 5)
 > ou do terminal (este passo).
 
-## Passo 7 — Testar o Circuit Breaker e o fallback
 
-1. No **Terminal B** (ms-obras), pressione **Ctrl+C** para parar o serviço. (Se subiu mais de uma instância, pare todas.)
-2. Aguarde uns 10 segundos e tente aprovar uma contribuição **pendente** (use o `id` de uma pendente, listada no
-   passo 2; se não houver nenhuma, crie outra no passo 3):
-
-```bash
-curl -i -X PATCH http://localhost:8082/api/v1/contribuicoes/2/aprovar
-```
-
-Resultado esperado: **HTTP 503** com a mensagem *"O servico de obras esta indisponivel no momento..."*. É o **fallback**
-do Circuit Breaker (depois de algumas falhas seguidas o circuito abre).
-
-3. Confira que a contribuição continua **`PENDENTE`**:
-
-```bash
-curl -i http://localhost:8082/api/v1/contribuicoes/2
-```
-
-4. Para voltar ao normal, suba o ms-obras de novo (`./mvnw spring-boot:run` na pasta `ms-obras`) e aguarde
-   **cerca de 1 minuto** (o Eureka e o Load Balancer precisam enxergar a instância nova e o circuito reabre sozinho).
-   Repita a aprovação do passo 4 para confirmar que voltou ao normal (**200**).
-
-## Passo 8 — Várias instâncias (porta aleatória e Load Balancer)
-
-Para ver o balanceamento, abra **outro terminal** e suba **uma segunda instância** do mesmo serviço, por exemplo:
-
-```bash
-cd ms-obras
-./mvnw spring-boot:run
-```
-
-No painel do Eureka (<http://localhost:8761>) o `MS-OBRAS` passa a mostrar **2 instâncias**, cada uma com uma porta
-aleatória diferente. As chamadas pelo Gateway são distribuídas entre elas.
-
-## Passo 9 — Parar tudo e começar do zero
+## Passo 7 — Parar tudo e começar do zero
 
 - Pare os serviços com **Ctrl+C** em cada terminal.
 - Para parar o MySQL **e apagar os dados** (volta ao estado inicial, com a carga do Flyway):
@@ -269,21 +217,6 @@ aleatória diferente. As chamadas pelo Gateway são distribuídas entre elas.
 ```bash
 docker compose down -v
 ```
-
----
-
-# Problemas comuns
-
-| Sintoma | Causa e solução |
-|---------|-----------------|
-| `invalid target release: 25` ou `release version 25 not supported` | O Java do terminal não é o 25. Veja **"Se o Java não for o 25"** no Passo 3. |
-| `port is already allocated` ao subir o MySQL | A porta 3307 está ocupada. Pare o programa que a usa e rode `docker compose up -d` de novo. |
-| `Port 8761 / 8082 was already in use` | Já existe um Eureka ou Gateway rodando. Feche o terminal antigo. |
-| `Communications link failure` / `Connection refused` no ms-obras ou ms-contribuicoes | O MySQL ainda não terminou de subir. Espere 30 segundos (Passo 2) e suba o serviço de novo. |
-| Eureka não mostra os 3 serviços | Aguarde até 1 minuto e atualize (F5). Confira se cada terminal mostrou `Started ...`. |
-| Swagger: *"Failed to load API definition"* | Aguarde os serviços se registrarem (30 a 60 s) e atualize (F5). |
-| `PATCH .../aprovar` retorna 503 | O ms-obras está fora do ar (é o fallback funcionando). Suba o ms-obras e tente de novo. |
-| `curl` no PowerShell dá erro de parâmetro | No PowerShell `curl` é um apelido de outro comando: use `curl.exe` ou `Invoke-RestMethod`. |
 
 ---
 
