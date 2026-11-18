@@ -35,15 +35,12 @@ public class Contribuicao {
     @Column(nullable = false, length = 20)
     private TipoObra tipo;
 
-    /** Artista (id no ms-obras). Nao ha FK: cada microsservico tem seu proprio banco. */
     @Column(name = "artista_id", nullable = false)
     private Long artistaId;
 
-    /** Id da obra criada no ms-obras quando a contribuicao e aprovada. */
     @Column(name = "obra_id")
     private Long obraId;
 
-    /** Status da contribuicao: vira APROVADA somente apos a comunicacao sincrona com o ms-obras. */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StatusContribuicao status = StatusContribuicao.PENDENTE;

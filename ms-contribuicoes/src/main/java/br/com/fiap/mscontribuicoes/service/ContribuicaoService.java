@@ -63,12 +63,7 @@ public class ContribuicaoService {
         repository.delete(c);
     }
 
-    /**
-     * Aprova a contribuicao. A mudanca de status depende da comunicacao SINCRONA com o ms-obras:
-     * cria a obra (se ainda nao existe) e a publica. Se o ms-obras falhar, o fallback lanca
-     * excecao e a contribuicao continua PENDENTE (sem @Transactional: o obraId ja criado e
-     * mantido, tornando a nova tentativa idempotente).
-     */
+
     public ContribuicaoResponse aprovar(Long id) {
         Contribuicao c = obter(id);
         exigirPendente(c);

@@ -12,7 +12,6 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    /** O "Try it out" do Swagger chama o API Gateway (porta fixa), que balanceia entre as instancias. */
     @Bean
     public OpenAPI openAPI(@Value("${app.gateway-url:http://localhost:8082}") String gatewayUrl) {
         return new OpenAPI()

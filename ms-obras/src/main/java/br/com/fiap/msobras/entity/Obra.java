@@ -34,7 +34,6 @@ public class Obra {
     @Column(nullable = false, length = 20)
     private TipoObra tipo;
 
-    /** Status da obra: alterado pelo ms-contribuicoes via comunicacao sincrona (OpenFeign). */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StatusObra status = StatusObra.EM_MODERACAO;

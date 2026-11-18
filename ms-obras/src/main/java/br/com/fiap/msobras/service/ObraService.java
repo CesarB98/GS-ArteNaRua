@@ -22,7 +22,6 @@ public class ObraService {
     private static final double METROS_POR_GRAU_LAT = 111_320.0;
     private static final double RAIO_TERRA_METROS = 6_371_000.0;
 
-    /** Transicoes permitidas do status da obra. */
     private static final Map<StatusObra, Set<StatusObra>> TRANSICOES = Map.of(
             StatusObra.EM_MODERACAO, Set.of(StatusObra.PUBLICADA, StatusObra.REMOVIDA),
             StatusObra.PUBLICADA, Set.of(StatusObra.REMOVIDA),
@@ -46,7 +45,6 @@ public class ObraService {
         return ObraResponse.de(obter(id));
     }
 
-    /** Obras PUBLICADAS num raio (em metros) ao redor de uma posicao, da mais proxima para a mais distante. */
     @Transactional(readOnly = true)
     public List<ObraResponse> listarProximas(double lat, double lng, double raioMetros) {
         double deltaLat = raioMetros / METROS_POR_GRAU_LAT;
@@ -82,7 +80,6 @@ public class ObraService {
         obraRepository.delete(obter(id));
     }
 
-    /** Chamado pelo ms-contribuicoes (OpenFeign) para publicar ou remover uma obra. */
     @Transactional
     public ObraResponse alterarStatus(Long id, StatusObra novoStatus) {
         Obra obra = obter(id);
@@ -113,7 +110,6 @@ public class ObraService {
         obra.setArtista(artista);
     }
 
-    /** Distancia de Haversine em metros. */
     static double distanciaMetros(double lat1, double lng1, double lat2, double lng2) {
         double dLat = Math.toRadians(lat2 - lat1);
         double dLng = Math.toRadians(lng2 - lng1);

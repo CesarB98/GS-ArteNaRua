@@ -9,11 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
-/**
- * Fallback do Circuit Breaker. Erros 4xx do ms-obras viram erros de negocio coerentes;
- * qualquer outra falha (servico fora do ar, timeout, circuito aberto) vira 503 e a
- * contribuicao permanece PENDENTE, podendo ser aprovada de novo depois.
- */
+
 @Component
 public class ObrasClientFallbackFactory implements FallbackFactory<ObrasClient> {
 
