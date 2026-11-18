@@ -1,0 +1,11 @@
+# Build
+target/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Logs e arquivos gerados
+*.log
+HELP.md
